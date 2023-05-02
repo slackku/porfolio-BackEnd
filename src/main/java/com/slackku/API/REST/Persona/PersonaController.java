@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.slackku.API.REST.Educacion.Educacion;
 import com.slackku.API.REST.Educacion.EducacionController;
+import com.slackku.API.REST.Experiencia.Experiencia;
+import com.slackku.API.REST.Experiencia.ExperienciaController;
 
 @RestController
 @RequestMapping("/persona")
@@ -24,6 +26,8 @@ public class PersonaController {
     private PersonaService personaServiceImpl;
     @Autowired
     private EducacionController educacionController;
+    @Autowired
+    private ExperienciaController experienciaController;
 
     @GetMapping("/traer")
     public List<Persona> listaPersonas() {
@@ -80,15 +84,26 @@ public class PersonaController {
     public void removeEducation(@PathVariable Long id, @RequestParam("idEduc") Long idEduc) {
         Persona personaLocal = personaServiceImpl.findPersona(id);
         Set<Educacion> educacions = personaLocal.getEducacion();
-        try {
-            educacionController.eliminarEducacion(idEduc);
-           // educacions.removeIf(e -> e.getIdEduc() == idEduc);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
+        educacionController.eliminarEducacion(idEduc);
         personaLocal.setEducacion(educacions);
         personaServiceImpl.createPersona(personaLocal);
     }
 
+    @PostMapping("/add-exp/{id}")
+    public Set<Experiencia> chargExperiencias(@PathVariable Long id, @RequestBody Experiencia experiencia) {
+        experiencia.setPers(personaServiceImpl.findPersona(id));
+        Experiencia exp = experienciaController.crearExperiencia(experiencia);
+        Persona personaLocal = personaServiceImpl.findPersona(id);
+        personaLocal.getExperiencia().add(exp);
+        return personaLocal.getExperiencia();
+    }
+
+    @DeleteMapping("/remove-exp/{id}")
+    public void removeExperiencia(@PathVariable Long id, @RequestParam("idExp") Long idExp) {
+        Persona personaLocal = personaServiceImpl.findPersona(id);
+        Set<Experiencia> experiencias = personaLocal.getExperiencia();
+        experienciaController.eliminarExperiencia(idExp);
+        personaLocal.setExperiencia(experiencias);
+        personaServiceImpl.createPersona(personaLocal);
+    }
 }
