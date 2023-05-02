@@ -37,7 +37,7 @@ public class PersonaServiceImpl implements PersonaService {
         PersonaDTO userDTO = new PersonaDTO(persona.getId(), persona.getName(), persona.getEmail(),
                 persona.getProfileImg(),
                 persona.getBannerImg(), persona.getPais(), persona.getProvincia(), persona.getOcupacion(),
-                persona.getSobreMi(), persona.getEducacion());
+                persona.getSobreMi(), persona.getEducacion(), persona.getExperiencia());
         return userDTO;
     }
 
