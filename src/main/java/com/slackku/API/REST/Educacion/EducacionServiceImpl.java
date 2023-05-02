@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class EducacionServiceImpl implements EducacionService {
 
     @Autowired
-    EducacionRepository educacionRepository;
+    private EducacionRepository educacionRepository;
 
     @Override
     public Educacion createEducacion(Educacion educacion) {

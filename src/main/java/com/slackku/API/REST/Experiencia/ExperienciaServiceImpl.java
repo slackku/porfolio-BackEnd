@@ -3,7 +3,9 @@ package com.slackku.API.REST.Experiencia;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ExperienciaServiceImpl implements ExperienciaService {
 
     @Autowired
@@ -11,7 +13,7 @@ public class ExperienciaServiceImpl implements ExperienciaService {
 
     @Override
     public Experiencia createExperiencia(Experiencia experiencia) {
-       return experienciaRepository.save(experiencia);
+        return experienciaRepository.save(experiencia);
     }
 
     @Override

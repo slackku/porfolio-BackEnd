@@ -15,31 +15,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/exp")
 public class ExperienciaController {
+
     @Autowired
-    ExperienciaServiceImpl experienciaServiceImpl;
+    private ExperienciaServiceImpl experienciaServiceImpl;
 
     @PostMapping("/crear")
-    public Experiencia crearEducacion(@RequestBody Experiencia experiencia) {
+    public Experiencia crearExperiencia(@RequestBody Experiencia experiencia) {
         return experienciaServiceImpl.createExperiencia(experiencia);
     }
 
     @GetMapping("/traer")
-    public List<Experiencia> traerlistaEducacion() {
+    public List<Experiencia> traerlistaExperiencia() {
         return experienciaServiceImpl.listExperiencia();
     }
 
     @GetMapping("/traer/{id}")
-    public Experiencia traerEducacion(@PathVariable Long id) {
+    public Experiencia traerExperiencia(@PathVariable Long id) {
         return experienciaServiceImpl.findExperienciaById(id);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void eliminarEducacion(@PathVariable Long id) {
+    public void eliminarExperiencia(@PathVariable Long id) {
         experienciaServiceImpl.deleteExperiencia(id);
     }
 
     @PostMapping("/modificar/{id}")
-    public Experiencia modificarEducacion(@PathVariable Long id,
+    public Experiencia modificarExperiencia(@PathVariable Long id,
             @RequestParam("nombreEmp") String nNombreEmp,
             @RequestParam("puesto") String nPuesto,
             @RequestParam("fecStart") String fecStart,

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/educ")
 public class EducacionController {
     @Autowired
-    EducacionServiceImpl educacionServiceImpl;
+    private EducacionServiceImpl educacionServiceImpl;
 
     @PostMapping("/crear")
     public Educacion crearEducacion(@RequestBody Educacion educacion) {
