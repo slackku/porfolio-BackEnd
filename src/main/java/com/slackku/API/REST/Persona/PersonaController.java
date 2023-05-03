@@ -1,15 +1,15 @@
 package com.slackku.API.REST.Persona;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,9 +17,11 @@ import com.slackku.API.REST.Educacion.Educacion;
 import com.slackku.API.REST.Educacion.EducacionController;
 import com.slackku.API.REST.Experiencia.Experiencia;
 import com.slackku.API.REST.Experiencia.ExperienciaController;
+import com.slackku.API.REST.Proyecto.Proyecto;
+import com.slackku.API.REST.Proyecto.ProyectoController;
 
 @RestController
-@RequestMapping("/persona")
+@CrossOrigin(origins = "http://localhost:4200/")
 public class PersonaController {
 
     @Autowired
@@ -28,28 +30,43 @@ public class PersonaController {
     private EducacionController educacionController;
     @Autowired
     private ExperienciaController experienciaController;
+    @Autowired
+    private ProyectoController proyectoController;
 
-    @GetMapping("/traer")
+    @GetMapping("/persona/traer")
     public List<Persona> listaPersonas() {
         return personaServiceImpl.listPersona();
     }
 
-    @GetMapping("/traer/{id}")
-    public Persona traerPersona(@PathVariable Long id) {
-        return personaServiceImpl.findPersona(id);
+    @GetMapping("/persona/traer/{id}")
+    public PersonaDTO traerPersona(@PathVariable Long id) {
+        Persona persona = personaServiceImpl.findPersona(id);
+        PersonaDTO personaDTO = new PersonaDTO(persona.getId(),
+                persona.getName(),
+                persona.getEmail(),
+                persona.getProfileImg(),
+                persona.getBannerImg(),
+                persona.getPais(),
+                persona.getProvincia(),
+                persona.getOcupacion(),
+                persona.getSobreMi(),
+                persona.getEducacion(),
+                persona.getExperiencia(),
+                persona.getProyecto());
+        return personaDTO;
     }
 
-    @PostMapping("/crear")
+    @PostMapping("/persona/crear")
     public void createPersona(@RequestBody Persona persona) {
         personaServiceImpl.createPersona(persona);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/persona/delete/{id}")
     public void borrarPersona(@PathVariable Long id) {
         personaServiceImpl.deletePersona(id);
     }
 
-    @PostMapping("/modificar/{id}")
+    @PostMapping("/persona/modificar/{id}")
     public Persona modificarPersona(@PathVariable Long id,
             @RequestParam("name") String Nname,
             @RequestParam("ocupacion") String Nocup,
@@ -71,8 +88,8 @@ public class PersonaController {
         return personaServiceImpl.login(persona.getUsername(), persona.getPassword());
     }
 
-    @PostMapping("/add-educ/{id}")
-    public Set<Educacion> chargeEducations(@PathVariable Long id, @RequestBody Educacion educacion) {
+    @PostMapping("/persona/add-educ/{id}")
+    public List<Educacion> chargeEducations(@PathVariable Long id, @RequestBody Educacion educacion) {
         educacion.setPers(personaServiceImpl.findPersona(id));
         Educacion educ = educacionController.crearEducacion(educacion);
         Persona personaLocal = personaServiceImpl.findPersona(id);
@@ -80,17 +97,17 @@ public class PersonaController {
         return personaLocal.getEducacion();
     }
 
-    @DeleteMapping("/remove-educ/{id}")
+    @DeleteMapping("/persona/remove-educ/{id}")
     public void removeEducation(@PathVariable Long id, @RequestParam("idEduc") Long idEduc) {
         Persona personaLocal = personaServiceImpl.findPersona(id);
-        Set<Educacion> educacions = personaLocal.getEducacion();
+        List<Educacion> educacions = personaLocal.getEducacion();
         educacionController.eliminarEducacion(idEduc);
         personaLocal.setEducacion(educacions);
         personaServiceImpl.createPersona(personaLocal);
     }
 
-    @PostMapping("/add-exp/{id}")
-    public Set<Experiencia> chargExperiencias(@PathVariable Long id, @RequestBody Experiencia experiencia) {
+    @PostMapping("/persona/add-exp/{id}")
+    public List<Experiencia> chargeExperiencias(@PathVariable Long id, @RequestBody Experiencia experiencia) {
         experiencia.setPers(personaServiceImpl.findPersona(id));
         Experiencia exp = experienciaController.crearExperiencia(experiencia);
         Persona personaLocal = personaServiceImpl.findPersona(id);
@@ -98,12 +115,30 @@ public class PersonaController {
         return personaLocal.getExperiencia();
     }
 
-    @DeleteMapping("/remove-exp/{id}")
+    @DeleteMapping("/persona/remove-exp/{id}")
     public void removeExperiencia(@PathVariable Long id, @RequestParam("idExp") Long idExp) {
         Persona personaLocal = personaServiceImpl.findPersona(id);
-        Set<Experiencia> experiencias = personaLocal.getExperiencia();
+        List<Experiencia> experiencias = personaLocal.getExperiencia();
         experienciaController.eliminarExperiencia(idExp);
         personaLocal.setExperiencia(experiencias);
+        personaServiceImpl.createPersona(personaLocal);
+    }
+
+    @PostMapping("/persona/add-proy/{id}")
+    public List<Proyecto> chargeProyectos(@PathVariable Long id, @RequestBody Proyecto proyecto) {
+        proyecto.setPers(personaServiceImpl.findPersona(id));
+        Proyecto proy = proyectoController.crearProyecto(proyecto);
+        Persona personaLocal = personaServiceImpl.findPersona(id);
+        personaLocal.getProyecto().add(proy);
+        return personaLocal.getProyecto();
+    }
+
+    @DeleteMapping("/persona/remove-proy/{id}")
+    public void removeProyecto(@PathVariable Long id, @RequestParam("idProy") Long idProy) {
+        Persona personaLocal = personaServiceImpl.findPersona(id);
+        List<Proyecto> proyectos = personaLocal.getProyecto();
+        experienciaController.eliminarExperiencia(idProy);
+        personaLocal.setProyecto(proyectos);
         personaServiceImpl.createPersona(personaLocal);
     }
 }

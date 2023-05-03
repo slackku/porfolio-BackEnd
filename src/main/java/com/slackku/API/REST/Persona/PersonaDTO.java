@@ -1,9 +1,10 @@
 package com.slackku.API.REST.Persona;
 
-import java.util.Set;
+import java.util.List;
 
 import com.slackku.API.REST.Educacion.Educacion;
 import com.slackku.API.REST.Experiencia.Experiencia;
+import com.slackku.API.REST.Proyecto.Proyecto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class PersonaDTO {
     private String provincia;
     private String ocupacion;
     private String sobreMi;
-    private Set<Educacion> educacion;
-    private Set<Experiencia> experiencias;
+    private List<Educacion> educacion;
+    private List<Experiencia> experiencias;
+    private List<Proyecto> proyectos;
 }
