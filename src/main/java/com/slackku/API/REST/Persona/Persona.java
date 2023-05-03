@@ -1,11 +1,13 @@
 package com.slackku.API.REST.Persona;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.List;
+
 
 import com.slackku.API.REST.Educacion.Educacion;
 import com.slackku.API.REST.Experiencia.Experiencia;
+import com.slackku.API.REST.Proyecto.Proyecto;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -53,22 +55,32 @@ public class Persona implements Serializable {
     private String bannerImg;
 
     @OneToMany(mappedBy = "pers", cascade = CascadeType.ALL)
-    private Set<Educacion> educacion = new HashSet<Educacion>();
+    private List<Educacion> educacion;
 
     @OneToMany(mappedBy = "pers", cascade = CascadeType.ALL)
-    private Set<Experiencia> experiencia = new HashSet<Experiencia>();
+    private List<Experiencia> experiencia;
 
-    public void setEducacion(Set<Educacion> educacion) {
+    @OneToMany(mappedBy = "pers", cascade = CascadeType.ALL)
+    private List<Proyecto> proyecto;
+
+    public void setEducacion(List<Educacion> educacion) {
         this.educacion = educacion;
         for (Educacion educaciones : educacion) {
             educaciones.setPers(this);
         }
     }
 
-    public void setExperiencia(Set<Experiencia> experiencia) {
+    public void setExperiencia(List<Experiencia> experiencia) {
         this.experiencia = experiencia;
         for (Experiencia experiencias : experiencia) {
             experiencias.setPers(this);
+        }
+    }
+
+    public void setProyecto(List<Proyecto> proyecto) {
+        this.proyecto = proyecto;
+        for (Proyecto proyectos : proyecto) {
+            proyectos.setPers(this);
         }
     }
 }
