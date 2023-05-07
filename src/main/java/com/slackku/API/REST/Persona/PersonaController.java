@@ -3,7 +3,7 @@ package com.slackku.API.REST.Persona;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,13 +83,9 @@ public class PersonaController {
         return personaLocal;
     }
 
-    @PostMapping("/login")
-    public PersonaDTO login(@RequestBody Persona persona) {
-        return personaServiceImpl.login(persona.getUsername(), persona.getPassword());
-    }
-
-    @PostMapping("/persona/add-educ/{id}")
-    public List<Educacion> chargeEducations(@PathVariable Long id, @RequestBody Educacion educacion) {
+    @PostMapping("/persona/add-educ/{id}{isSessionOn}")
+    public List<Educacion> chargeEducations(@PathVariable Long id, @PathVariable Integer isSessionOn,@RequestBody Educacion educacion) {
+        
         educacion.setPers(personaServiceImpl.findPersona(id));
         Educacion educ = educacionController.crearEducacion(educacion);
         Persona personaLocal = personaServiceImpl.findPersona(id);
@@ -140,5 +136,10 @@ public class PersonaController {
         experienciaController.eliminarExperiencia(idProy);
         personaLocal.setProyecto(proyectos);
         personaServiceImpl.createPersona(personaLocal);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<PersonaDTO> login(@RequestBody Persona persona) {
+        return personaServiceImpl.login(persona.getUsername(), persona.getPassword());
     }
 }
