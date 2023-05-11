@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine-dk
+FROM amazoncorretto:17
 
 MAINTAINER ignaciolorenzo
 
