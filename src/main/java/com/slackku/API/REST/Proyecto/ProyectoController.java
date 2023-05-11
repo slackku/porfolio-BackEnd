@@ -19,7 +19,7 @@ import com.slackku.API.REST.Exception.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/proy")
-@CrossOrigin(origins = "https://portfolio-slacku.web.app/")
+@CrossOrigin(origins = "https://portfolio-slacku.web.app")
 public class ProyectoController {
     @Autowired
     private ProyectoServiceImpl proyectoServiceImpl;

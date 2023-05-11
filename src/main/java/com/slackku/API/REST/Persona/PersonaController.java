@@ -23,7 +23,7 @@ import com.slackku.API.REST.Proyecto.Proyecto;
 import com.slackku.API.REST.Proyecto.ProyectoController;
 
 @RestController
-@CrossOrigin(origins = "https://portfolio-slacku.web.app/")
+@CrossOrigin(origins = "https://portfolio-slacku.web.app")
 public class PersonaController {
 
     @Autowired
