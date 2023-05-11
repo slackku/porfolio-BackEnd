@@ -1,6 +1,7 @@
 package com.slackku.API.REST.Proyecto;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -12,5 +13,9 @@ public interface ProyectoService {
 
     public List<Proyecto> listProyecto();
 
-    public Proyecto findProyectoById(Long id);
+    public Optional<Proyecto> findProyectoById(Long id);
+
+    public Boolean hasChanges(Long id, Proyecto proyecto) throws Exception;
+
+    public Boolean hasNullInputs(Proyecto proyecto);
 }

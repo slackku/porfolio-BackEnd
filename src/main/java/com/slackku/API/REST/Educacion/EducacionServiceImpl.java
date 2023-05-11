@@ -1,9 +1,12 @@
 package com.slackku.API.REST.Educacion;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.slackku.API.REST.Exception.ResourceNotFoundException;
 
 @Service
 public class EducacionServiceImpl implements EducacionService {
@@ -22,13 +25,23 @@ public class EducacionServiceImpl implements EducacionService {
     }
 
     @Override
-    public Educacion findEducacion(Long id) {
-        return educacionRepository.findById(id).get();
+    public Optional<Educacion> findEducacionById(Long id) {
+        return educacionRepository.findById(id);
     }
 
     @Override
     public List<Educacion> listEducacions() {
         return educacionRepository.findAll();
+    }
+
+    @Override
+    public Boolean hasChanges(Long id, Educacion educacion) throws Exception {
+        Educacion originalEducacion = educacionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe educacion de id: " + id));
+        return (!originalEducacion.getCarrera().equals(educacion.getCarrera())) ||
+                (!originalEducacion.getNombreInst().equals(educacion.getNombreInst())) ||
+                (!originalEducacion.getFecStart().equals(educacion.getFecStart())) ||
+                (!originalEducacion.getFecEnd().equals(educacion.getFecEnd()));
     }
 
 }

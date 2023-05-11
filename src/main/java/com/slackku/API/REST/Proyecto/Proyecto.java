@@ -3,8 +3,6 @@ package com.slackku.API.REST.Proyecto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.slackku.API.REST.Persona.Persona;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +25,6 @@ public class Proyecto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idProy;
-    @Column(unique = true)
     @NotNull
     private String nombreProyecto;
     @NotNull

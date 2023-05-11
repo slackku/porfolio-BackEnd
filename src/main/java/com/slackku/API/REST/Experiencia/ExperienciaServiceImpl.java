@@ -1,9 +1,12 @@
 package com.slackku.API.REST.Experiencia;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.slackku.API.REST.Exception.ResourceNotFoundException;
 
 @Service
 public class ExperienciaServiceImpl implements ExperienciaService {
@@ -27,8 +30,17 @@ public class ExperienciaServiceImpl implements ExperienciaService {
     }
 
     @Override
-    public Experiencia findExperienciaById(Long id) {
-        return experienciaRepository.findById(id).get();
+    public Optional<Experiencia> findExperienciaById(Long id) {
+        return experienciaRepository.findById(id);
     }
 
+    @Override
+    public Boolean hasChanges(Long id, Experiencia experiencia) throws Exception {
+        Experiencia originalExperiencia = experienciaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe experiencia de id: " + id));
+        return (!originalExperiencia.getNombreEmp().equals(experiencia.getNombreEmp())) ||
+                (!originalExperiencia.getPuesto().equals(experiencia.getPuesto())) ||
+                (!originalExperiencia.getFecStart().equals(experiencia.getFecStart())) ||
+                (!originalExperiencia.getFecEnd().equals(experiencia.getFecEnd()));
+    }
 }

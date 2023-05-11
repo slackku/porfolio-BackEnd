@@ -1,6 +1,7 @@
 package com.slackku.API.REST.Educacion;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -12,5 +13,7 @@ public interface EducacionService {
 
     public List<Educacion> listEducacions();
 
-    public Educacion findEducacion(Long id);
+    public Optional<Educacion> findEducacionById(Long id);
+
+    public Boolean hasChanges(Long id, Educacion educacion) throws Exception;
 }

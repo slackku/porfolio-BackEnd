@@ -3,18 +3,20 @@ package com.slackku.API.REST.Persona;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.slackku.API.REST.Educacion.Educacion;
 import com.slackku.API.REST.Educacion.EducacionController;
+import com.slackku.API.REST.Exception.ResourceNotFoundException;
 import com.slackku.API.REST.Experiencia.Experiencia;
 import com.slackku.API.REST.Experiencia.ExperienciaController;
 import com.slackku.API.REST.Proyecto.Proyecto;
@@ -40,12 +42,12 @@ public class PersonaController {
 
     @GetMapping("/persona/traer/{id}")
     public PersonaDTO traerPersona(@PathVariable Long id) {
-        Persona persona = personaServiceImpl.findPersona(id);
+        Persona persona = personaServiceImpl.findPersonaById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe la persona de id: " + id));
         PersonaDTO personaDTO = new PersonaDTO(persona.getId(),
-                persona.getName(),
+                persona.getNombre(),
                 persona.getEmail(),
                 persona.getProfileImg(),
-                persona.getBannerImg(),
                 persona.getPais(),
                 persona.getProvincia(),
                 persona.getOcupacion(),
@@ -56,90 +58,93 @@ public class PersonaController {
         return personaDTO;
     }
 
-    @PostMapping("/persona/crear")
+    // @PostMapping("/persona/crear")
     public void createPersona(@RequestBody Persona persona) {
         personaServiceImpl.createPersona(persona);
     }
 
-    @DeleteMapping("/persona/delete/{id}")
+    // @DeleteMapping("/persona/delete/{id}")
     public void borrarPersona(@PathVariable Long id) {
         personaServiceImpl.deletePersona(id);
     }
 
-    @PostMapping("/persona/modificar/{id}")
-    public Persona modificarPersona(@PathVariable Long id,
-            @RequestParam("name") String Nname,
-            @RequestParam("ocupacion") String Nocup,
-            @RequestParam("pais") String Npais,
-            @RequestParam("provincia") String Nprovincia,
-            @RequestParam("sobreMi") String NsobreMi) {
-        Persona personaLocal = personaServiceImpl.findPersona(id);
-        personaLocal.setName(Nname);
-        personaLocal.setOcupacion(Nocup);
-        personaLocal.setPais(Npais);
-        personaLocal.setProvincia(Nprovincia);
-        personaLocal.setSobreMi(NsobreMi);
-        personaServiceImpl.createPersona(personaLocal);
-        return personaLocal;
-    }
+    @PutMapping("/persona/modificar/{id}")
+    public ResponseEntity<Persona> modificarPersona(@PathVariable Long id, @RequestBody Persona updatedPersona) {
+        Persona originalPersona = personaServiceImpl.findPersonaById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe proyecto de id: " + id));
 
-    @PostMapping("/persona/add-educ/{id}{isSessionOn}")
-    public List<Educacion> chargeEducations(@PathVariable Long id, @PathVariable Integer isSessionOn,@RequestBody Educacion educacion) {
-        
-        educacion.setPers(personaServiceImpl.findPersona(id));
-        Educacion educ = educacionController.crearEducacion(educacion);
-        Persona personaLocal = personaServiceImpl.findPersona(id);
-        personaLocal.getEducacion().add(educ);
-        return personaLocal.getEducacion();
-    }
-
-    @DeleteMapping("/persona/remove-educ/{id}")
-    public void removeEducation(@PathVariable Long id, @RequestParam("idEduc") Long idEduc) {
-        Persona personaLocal = personaServiceImpl.findPersona(id);
-        List<Educacion> educacions = personaLocal.getEducacion();
-        educacionController.eliminarEducacion(idEduc);
-        personaLocal.setEducacion(educacions);
-        personaServiceImpl.createPersona(personaLocal);
-    }
-
-    @PostMapping("/persona/add-exp/{id}")
-    public List<Experiencia> chargeExperiencias(@PathVariable Long id, @RequestBody Experiencia experiencia) {
-        experiencia.setPers(personaServiceImpl.findPersona(id));
-        Experiencia exp = experienciaController.crearExperiencia(experiencia);
-        Persona personaLocal = personaServiceImpl.findPersona(id);
-        personaLocal.getExperiencia().add(exp);
-        return personaLocal.getExperiencia();
-    }
-
-    @DeleteMapping("/persona/remove-exp/{id}")
-    public void removeExperiencia(@PathVariable Long id, @RequestParam("idExp") Long idExp) {
-        Persona personaLocal = personaServiceImpl.findPersona(id);
-        List<Experiencia> experiencias = personaLocal.getExperiencia();
-        experienciaController.eliminarExperiencia(idExp);
-        personaLocal.setExperiencia(experiencias);
-        personaServiceImpl.createPersona(personaLocal);
-    }
-
-    @PostMapping("/persona/add-proy/{id}")
-    public List<Proyecto> chargeProyectos(@PathVariable Long id, @RequestBody Proyecto proyecto) {
-        proyecto.setPers(personaServiceImpl.findPersona(id));
-        Proyecto proy = proyectoController.crearProyecto(proyecto);
-        Persona personaLocal = personaServiceImpl.findPersona(id);
-        personaLocal.getProyecto().add(proy);
-        return personaLocal.getProyecto();
-    }
-
-    @DeleteMapping("/persona/remove-proy/{id}")
-    public void removeProyecto(@PathVariable Long id, @RequestParam("idProy") Long idProy) {
-        Persona personaLocal = personaServiceImpl.findPersona(id);
-        List<Proyecto> proyectos = personaLocal.getProyecto();
-        experienciaController.eliminarExperiencia(idProy);
-        personaLocal.setProyecto(proyectos);
-        personaServiceImpl.createPersona(personaLocal);
+        if (personaServiceImpl.hasChanges(id, updatedPersona)) {
+            originalPersona.setNombre(updatedPersona.getNombre());
+            originalPersona.setOcupacion(updatedPersona.getOcupacion());
+            originalPersona.setPais(updatedPersona.getPais());
+            originalPersona.setProvincia(updatedPersona.getProvincia());
+            originalPersona.setProfileImg(updatedPersona.getProfileImg());
+            originalPersona.setSobreMi(updatedPersona.getSobreMi());
+            personaServiceImpl.createPersona(originalPersona);
+            return ResponseEntity.ok(originalPersona);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(null);
+        }
     }
 
     @PostMapping("/login")
     public ResponseEntity<PersonaDTO> login(@RequestBody Persona persona) {
         return personaServiceImpl.login(persona.getUsername(), persona.getPassword());
+    }
+
+    // Post Mappings EDU-EXP-PROY
+
+    @PostMapping("/persona/add-educ/{id}")
+    public ResponseEntity<Educacion> chargeEducations(@PathVariable Long id,
+            @RequestBody Educacion educacion) {
+        Persona personaLocal = personaServiceImpl.findPersonaById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe la persona de id: " + id));
+        educacion.setPers(personaLocal);
+        Educacion educ = educacionController.crearEducacion(educacion);
+        personaLocal.getEducacion().add(educ);
+        return ResponseEntity.status(HttpStatus.CREATED).body(educ);
+
+    }
+
+    @PostMapping("/persona/add-exp/{id}")
+    public ResponseEntity<Experiencia> chargeExperiencias(@PathVariable Long id,
+            @RequestBody Experiencia experiencia) {
+        Persona personaLocal = personaServiceImpl.findPersonaById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe la persona de id: " + id));
+        experiencia.setPers(personaLocal);
+        Experiencia exp = experienciaController.crearExperiencia(experiencia);
+        personaLocal.getExperiencia().add(exp);
+        return ResponseEntity.status(HttpStatus.CREATED).body(exp);
+    }
+
+    @PostMapping("/persona/add-proy/{id}")
+    public ResponseEntity<Proyecto> chargeProyectos(@PathVariable Long id,
+            @RequestBody Proyecto proyecto) {
+        Persona personaLocal = personaServiceImpl.findPersonaById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe la persona de id: " + id));
+        proyecto.setPers(personaLocal);
+        Proyecto proy = proyectoController.crearProyecto(proyecto);
+        personaLocal.getProyecto().add(proy);
+        return ResponseEntity.status(HttpStatus.CREATED).body(proy);
+    }
+
+    // Delete Mappings EDU-EXP-PROY
+
+    @DeleteMapping("/persona/remove-educ/{idEduc}")
+    public ResponseEntity<Educacion> removeEducation(@PathVariable Long idEduc) {
+        educacionController.eliminarEducacion(idEduc);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @DeleteMapping("/persona/remove-exp/{idExp}")
+    public ResponseEntity<Experiencia> removeExperiencia(@PathVariable Long idExp) {
+        experienciaController.eliminarExperiencia(idExp);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @DeleteMapping("/persona/remove-proy/{idProy}")
+    public ResponseEntity<Proyecto> removeProyecto(@PathVariable Long idProy) {
+        proyectoController.eliminarProyecto(idProy);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

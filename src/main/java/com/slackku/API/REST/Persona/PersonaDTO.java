@@ -20,7 +20,6 @@ public class PersonaDTO {
     private String nombre;
     private String email;
     private String profileImg;
-    private String bannerImg;
     private String pais;
     private String provincia;
     private String ocupacion;

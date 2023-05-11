@@ -9,7 +9,6 @@ import com.slackku.API.REST.Educacion.Educacion;
 import com.slackku.API.REST.Experiencia.Experiencia;
 import com.slackku.API.REST.Proyecto.Proyecto;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,7 +40,7 @@ public class Persona implements Serializable {
     @NotNull
     private String password;
     @NotNull
-    private String name;
+    private String nombre;
     @NotNull
     private String ocupacion;
     @NotNull
@@ -50,9 +49,7 @@ public class Persona implements Serializable {
     private String provincia;
     @NotNull
     private String sobreMi;
-    @Basic
     private String profileImg;
-    private String bannerImg;
 
     @OneToMany(mappedBy = "pers", cascade = CascadeType.ALL)
     private List<Educacion> educacion;
