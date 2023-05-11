@@ -23,7 +23,7 @@ import com.slackku.API.REST.Proyecto.Proyecto;
 import com.slackku.API.REST.Proyecto.ProyectoController;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "https://portfolio-slacku.web.app/")
 public class PersonaController {
 
     @Autowired
@@ -58,7 +58,7 @@ public class PersonaController {
         return personaDTO;
     }
 
-    // @PostMapping("/persona/crear")
+    @PostMapping("/persona/crear")
     public void createPersona(@RequestBody Persona persona) {
         personaServiceImpl.createPersona(persona);
     }

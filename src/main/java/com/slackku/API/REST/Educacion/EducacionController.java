@@ -20,7 +20,7 @@ import com.slackku.API.REST.Exception.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/educ")
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "https://portfolio-slacku.web.app/")
 public class EducacionController {
     @Autowired
     private EducacionServiceImpl educacionServiceImpl;
